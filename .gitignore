@@ -1,0 +1,5 @@
+# IDE specific
+.idea
+
+# python specific
+__pycharm__
