@@ -43,11 +43,92 @@ def tridiagonal_matrix_det(a: np.ndarray, b: np.ndarray, c: np.ndarray) -> float
     return f_n[-1]
 
 
-def F(n: int, a: np.ndarray, b: np.ndarray, c: np.ndarray):
-    if n == 0 or n == -1:
-        return n+1
-    else:
-        print(a[n] * F(n-1, a[n-1], b[n-2], c[n-2]) - c[n-2] * b[n-2] * F(n-2, a[n-2], b[n-2], c[n-2]))
-        return a[n] * F(n-1, a[n-1], b[n-2], c[n-2]) - c[n-2] * b[n-2] * F(n-2, a[n-2], b[n-2], c[n-2])
+class TridiagonalMatrix:
+    def __init__(self, a: np.ndarray, b: np.ndarray, c: np.ndarray) -> None:
+        """
+        Class constructor
+        :param a: The vector containing the entries of the major diagonal
+        :param b: The vector containing the entries of the upper diagonal.
+        :param c: The vector containing the entries of the lower diagonal.
+        :return: None
+        """
+        if (len(b) != len(a)-1) | len(c) != len(a)-1:
+            raise ValueError("Length of vector b or c should be an order less than that of vector a")
+        self.a = a
+        self.b = b
+        self.c = c
+        self.n = len(a)
+
+    @property
+    def full_matrix(self) -> np.ndarray:
+        """
+        Returns a numpy array containing the full matrix
+        :return:
+        """
+        return np.diag(self.a) + np.diag(self.b, 1) + np.diag(self.c, -1)
+
+    @property
+    def det(self) -> float:
+        """
+        This method solves for the determinant of a tri-diagonal matrix.
+        :return: (float) matrix determinant
+        """
+        f_n: list = []
+        for i in range(self.n):
+            if i == 0:
+                f_n.append(self.a[0])
+            elif i == 1:
+                f_n.append(self.a[i] * f_n[i - 1] - self.c[i - 1] * self.b[i - 1])
+            else:
+                f_n.append(self.a[i] * f_n[i - 1] - self.c[i - 1] * self.b[i - 1] * f_n[i - 2])
+        return f_n[-1]
+
+    @property
+    def LU(self) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Returns the L and U matrix from the LU decomposition
+        :return: tuple with the first entry containing the L matrix and the second matrix containing the U matrix
+        """
+        # define the L and U vectors
+        u: np.ndarray = np.zeros(self.n)
+        l: np.ndarray = np.zeros(self.n - 1)
+
+        # from thomas algorithm a_1 = u_1
+        u[0] = self.a[0]
+
+        # Now calculate l_i and u_i+1 until all the values have been calculated
+        for i_ in range(self.n-1):
+            l[i_] = self.c[i_] / u[i_]
+            u[i_+1] = self.a[i_+1] - l[i_] * self.b[i_]
+
+        return l, u
+
+    @property
+    def LU_matrix(self) -> tuple[np.ndarray, np.ndarray]:
+        l, u = self.LU
+        return np.diag(np.ones(self.n)) + np.diag(l, -1), np.diag(u) + np.diag(self.b, 1)
+
+    def thomas_alg_y(self, d: np.ndarray) -> np.ndarray:
+        y: np.ndarray = np.zeros(self.n)
+        y[0] = d[0]
+        l, u = self.LU
+
+        for i_ in range(1, self.n):
+            y[i_] = d[i_] - l[i_-1]*y[i_-1]
+
+        return l, u, y
+
+    def thomas_alg(self, d: np.ndarray) -> np.ndarray:
+        _, u, y = self.thomas_alg_y(d=d)
+        x: np.ndarray = np.zeros(self.n)
+        x[-1] = y[-1] / u[-1]
+
+        for i_ in range(self.n-2, -1, -1):
+            x[i_] = (y[i_] - self.b[i_] * x[i_+1])/u[i_]
+
+        return x
+
+    def __str__(self):
+        return np.array_str(self.full_matrix)
 
 
