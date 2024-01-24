@@ -6,7 +6,8 @@ import numpy.typing as npt
 from utils import PhysicsConstants
 
 
-def BV(i_0: float, alpha_a: float, alpha_c: float, temp: float, eta_s: Union[float, npt.ArrayLike]) -> Union[float, npt.ArrayLike]:
+def butler_volmer(i_0: float, alpha_a: float, alpha_c: float, temp: float, eta_s: Union[float, npt.ArrayLike]) \
+        -> Union[float, npt.ArrayLike]:
     """
     Calculates the current density [A/m2] using the Butler-Volmer equation
     :param i_0: exchange current density [A/m2]
@@ -18,3 +19,8 @@ def BV(i_0: float, alpha_a: float, alpha_c: float, temp: float, eta_s: Union[flo
     """
     return i_0 * (np.exp(alpha_a * PhysicsConstants.F * eta_s/(PhysicsConstants.R * temp)) - \
                   np.exp(-alpha_c * PhysicsConstants.F * eta_s/(PhysicsConstants.R * temp)))
+
+
+# def phi(conductivity: float, )
+
+
