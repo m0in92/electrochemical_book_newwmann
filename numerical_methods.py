@@ -139,6 +139,22 @@ class TridiagonalMatrix:
 
         return x
 
+    def apply_dirchilet_bc_begin(self) -> None:
+        """
+        Applies Dirichilet boundary conditions at the beginning of the matrix.
+        :return: None
+        """
+        self.a[0] = 1.0
+        self.b[0] = 0
+
+    def apply_newman_bc_end(self) -> None:
+        """
+        Applies a Newman boundary condition at the end of the matrix
+        :return: None
+        """
+        self.a[-1] = 1.0
+        self.c[-1] = -1.0
+
     def __str__(self):
         return np.array_str(self.full_matrix)
 

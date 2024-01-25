@@ -141,49 +141,49 @@ def solver_FE_simple(I, a, L, Nx, F, T):
 #     return u, x, t, t1-t0
 #
 #
-# def solver_BE_simple(I, a, L, Nx, F, T):
-#     """
-#     Simplest expression of the computational algorithm
-#     for the Backward Euler method, using explicit Python loops
-#     and a dense matrix format for the coefficient matrix.
-#     """
-#     import time
-#     t0 = time.clock()
-#     x = linspace(0, L, Nx+1)   # mesh points in space
-#     dx = x[1] - x[0]
-#     dt = F*dx**2/a
-#     Nt = int(round(T/float(dt)))
-#     t = linspace(0, T, Nt+1)   # mesh points in time
-#     u   = zeros(Nx+1)
-#     u_1 = zeros(Nx+1)
-#
-#     # Data structures for the linear system
-#     A = zeros((Nx+1, Nx+1))
-#     b = zeros(Nx+1)
-#
-#     for i in range(1, Nx):
-#         A[i,i-1] = -F
-#         A[i,i+1] = -F
-#         A[i,i] = 1 + 2*F
-#     A[0,0] = A[Nx,Nx] = 1
-#
-#     # Set initial condition u(x,0) = I(x)
-#     for i in range(0, Nx+1):
-#         u_1[i] = I(x[i])
-#
-#     for n in range(0, Nt):
-#         # Compute b and solve linear system
-#         for i in range(1, Nx):
-#             b[i] = -u_1[i]
-#         b[0] = b[Nx] = 0
-#         u[:] = linalg.solve(A, b)
-#
-#         # Update u_1 before next step
-#         #u_1[:]= u
-#         u_1, u = u, u_1
-#
-#     t1 = time.clock()
-#     return u, x, t, t1-t0
+def solver_BE_simple(I, a, L, Nx, F, T):
+    """
+    Simplest expression of the computational algorithm
+    for the Backward Euler method, using explicit Python loops
+    and a dense matrix format for the coefficient matrix.
+    """
+    import time
+    t0 = time.time()
+    x = np.linspace(0, L, Nx+1)   # mesh points in space
+    dx = x[1] - x[0]
+    dt = F*dx**2/a
+    Nt = int(round(T/float(dt)))
+    t = np.linspace(0, T, Nt+1)   # mesh points in time
+    u   = np.zeros(Nx+1)
+    u_1 = np.zeros(Nx+1)
+
+    # Data structures for the linear system
+    A = np.zeros((Nx+1, Nx+1))
+    b = np.zeros(Nx+1)
+
+    for i in range(1, Nx):
+        A[i,i-1] = -F
+        A[i,i+1] = -F
+        A[i,i] = 1 + 2*F
+    A[0,0] = A[Nx,Nx] = 1
+
+    # Set initial condition u(x,0) = I(x)
+    for i in range(0, Nx+1):
+        u_1[i] = I(x[i])
+
+    for n in range(0, Nt):
+        # Compute b and solve linear system
+        for i in range(1, Nx):
+            b[i] = u_1[i]
+        b[0] = b[Nx] = 0
+        u[:] = scipy.linalg.solve(A, b)
+
+        # Update u_1 before next step
+        u_1[:]= u
+        # u_1, u = u, u_1
+
+    t1 = time.time()
+    return u, x, t, t1-t0
 #
 #
 #
