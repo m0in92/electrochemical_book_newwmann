@@ -1,3 +1,5 @@
+from typing import Self
+
 import numpy as np
 import numpy.typing as npt
 
@@ -59,6 +61,15 @@ class TridiagonalMatrix:
         self.c = c
         self.n = len(a)
 
+    @classmethod
+    def toeplitz_matrix(cls, a: float, b: float, c: float, n: int) -> Self:
+        if n < 2:
+            raise ValueError("n, the size of the square matrix needs to be atleast 2 in size.,")
+        a_: np.ndarray = a * np.ones(n)
+        b_: np.ndarray = b * np.ones(n-1)
+        c_: np.ndarray = c * np.ones(n-1)
+        return cls(a=a_, b=b_, c=c_)
+
     @property
     def full_matrix(self) -> np.ndarray:
         """
@@ -84,7 +95,7 @@ class TridiagonalMatrix:
         return f_n[-1]
 
     @property
-    def LU(self) -> tuple[np.ndarray, np.ndarray]:
+    def lu(self) -> tuple[np.ndarray, np.ndarray]:
         """
         Returns the L and U matrix from the LU decomposition
         :return: tuple with the first entry containing the L matrix and the second matrix containing the U matrix
@@ -104,14 +115,14 @@ class TridiagonalMatrix:
         return l, u
 
     @property
-    def LU_matrix(self) -> tuple[np.ndarray, np.ndarray]:
-        l, u = self.LU
+    def lu_matrix(self) -> tuple[np.ndarray, np.ndarray]:
+        l, u = self.lu
         return np.diag(np.ones(self.n)) + np.diag(l, -1), np.diag(u) + np.diag(self.b, 1)
 
-    def thomas_alg_y(self, d: np.ndarray) -> np.ndarray:
+    def thomas_alg_y(self, d: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         y: np.ndarray = np.zeros(self.n)
         y[0] = d[0]
-        l, u = self.LU
+        l, u = self.lu
 
         for i_ in range(1, self.n):
             y[i_] = d[i_] - l[i_-1]*y[i_-1]

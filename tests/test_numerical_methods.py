@@ -45,6 +45,16 @@ class TestTridiagonalMatrixClass(unittest.TestCase):
         self.assertTrue(np.array_equal(self.c, self.tri_matrix.c))
         self.assertEqual(len(self.a), self.tri_matrix.n)
 
+    def test_classmethod_toeplitz_matrix(self):
+        a: float = -2.0
+        b: float = 1.0
+        c: float = -1.0
+
+        self.assertTrue(np.array_equal(self.a, self.tri_matrix.a))
+        self.assertTrue(np.array_equal(self.b, self.tri_matrix.b))
+        self.assertTrue(np.array_equal(self.c, self.tri_matrix.c))
+        self.assertEqual(len(self.a), self.tri_matrix.n)
+
     def test_property_full_matrix(self):
         answer: np.ndarray = np.array([[-2, 1, 0, 0, 0],
                                        [-1, -2, 1, 0, 0],
@@ -66,8 +76,8 @@ class TestTridiagonalMatrixClass(unittest.TestCase):
         answer_l: np.ndarray = np.array([[1, 0, 0], [2, 1, 0], [0, 0.6, 1]])
         answer_u: np.ndarray = np.array([[1, 1, 0], [0, 5, 8], [0, 0, 0.2]])
 
-        self.assertTrue(np.array_equal(answer_l, tridiag_matrix.LU_matrix[0]))
-        self.assertTrue(np.all(np.isclose(answer_u, tridiag_matrix.LU_matrix[1])))
+        self.assertTrue(np.array_equal(answer_l, tridiag_matrix.lu_matrix[0]))
+        self.assertTrue(np.all(np.isclose(answer_u, tridiag_matrix.lu_matrix[1])))
     def test_method_thomas_alg_y(self):
         a: np.ndarray = np.array([1, 7, 5])
         b: np.ndarray = np.array([1, 8])
