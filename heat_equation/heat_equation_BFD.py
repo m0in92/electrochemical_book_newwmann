@@ -7,22 +7,7 @@ import matplotlib.pyplot as plt
 from coords import Grid1DFD
 from benchmarks.diffusion_equation_1D import solver_BE_simple
 from variables import Conc
-
-
-def func_c_init(a_coord: float) -> float:
-    return a_coord
-
-
-def func_c_init_plug(x: float) -> float:
-    if abs(x - 1.0 / 2.0) > 0.1:
-        return 0
-    else:
-        return 1
-
-
-def guassian(x):
-    """Gaussian profile as initial condition."""
-    return np.exp(-0.5*((x-1.0/2.0)**2)/0.05**2)
+from initial_conditions import linear, plug, guassian
 
 
 a: float = 0.01  # unit-less
